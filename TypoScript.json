@@ -1,0 +1,223 @@
+{
+    "fileTypes": [
+        "ts2",
+        "foo"
+    ],
+    "name": "TYPO3.TypoScript",
+    "patterns": [
+        {
+            "match": "prototype",
+            "name": "keyword.control"
+        },
+        {
+            "begin": "(prototype\\()",
+            "end": "(\\))",
+            "patterns": [
+                {
+                    "include": "#prototypes"
+                }
+            ]
+        },
+        {
+            "begin": "(\\$\\{)",
+            "end": "(\\})",
+            "name": "support.function",
+            "patterns": [
+                {
+                    "match": "[A-Za-z0-9_\\.]+",
+                    "name": "variable"
+                },
+                {
+                    "include": "#prototypes"
+                },
+                {
+                    "include": "#string-double-quoted"
+                },
+                {
+                    "include": "#string-single-quoted"
+                }
+            ]
+        },
+        {
+            "match": "@[A-Za-z_]+",
+            "name": "keyword.control"
+        },
+        {
+            "match": "",
+            "name": "keyword.control"
+        },
+        {
+            "include": "#variables"
+        },
+        {
+            "include": "#string-double-quoted"
+        },
+        {
+            "include": "#string-single-quoted"
+        },
+        {
+            "include": "#prototypes"
+        },
+        {
+            "include": "#comments"
+        }
+    ],
+    "repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "begin": "/\\*\\*(?:#@\\+)?\\s*$",
+                    "captures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.php"
+                        }
+                    },
+                    "comment": "This now only highlights a docblock if the first line contains only /**\n\t\t\t\t\t\t\t\t- this is to stop highlighting everything as invalid when people do comment banners with /******** ...\n\t\t\t\t\t\t\t\t- Now matches /**#@+ too - used for docblock templates: http://manual.phpdoc.org/HTMLframesConverter/default/phpDocumentor/tutorial_phpDocumentor.howto.pkg.html#basics.docblocktemplate",
+                    "end": "\\*/",
+                    "name": "comment.block.documentation.phpdoc.php",
+                    "patterns": [
+                        {
+                            "include": "#php_doc"
+                        }
+                    ]
+                },
+                {
+                    "begin": "/\\*",
+                    "captures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.php"
+                        }
+                    },
+                    "end": "\\*/",
+                    "name": "comment.block.php"
+                },
+                {
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.comment.php"
+                        }
+                    },
+                    "match": "(//).*?($\\n?|(?=\\?>))",
+                    "name": "comment.line.double-slash.php"
+                },
+                {
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.comment.php"
+                        }
+                    },
+                    "match": "(#).*?($\\n?|(?=\\?>))",
+                    "name": "comment.line.number-sign.php"
+                }
+            ]
+        },
+        "interpolation": {
+            "comment": "http://www.php.net/manual/en/language.types.string.php#language.types.string.parsing",
+            "patterns": [
+                {
+                    "match": "\\\\[0-7]{1,3}",
+                    "name": "constant.numeric.octal.php"
+                },
+                {
+                    "match": "\\\\x[0-9A-Fa-f]{1,2}",
+                    "name": "constant.numeric.hex.php"
+                },
+                {
+                    "match": "\\\\[nrt\\\\\\$\\\"]",
+                    "name": "constant.character.escape.php"
+                },
+                {
+                    "begin": "(\\{)(?=\\$.*?\\})",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.variable.php"
+                        }
+                    },
+                    "end": "(\\})",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.variable.php"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#language"
+                        }
+                    ]
+                },
+                {
+                    "include": "#variable-name"
+                }
+            ]
+        },
+        "prototypes": {
+            "patterns": [
+                {
+                    "begin": "(?=\\\\?[a-zA-Z_\\x{7f}-\\x{ff}])",
+                    "end": "(?=[^\\\\a-zA-Z_\\x{7f}-\\x{ff}])",
+                    "patterns": [
+                        {
+                            "comment": "In PHP, any identifier which is not a variable is taken to be a constant.\n        \t\t\t\tHowever, if there is no constant defined with the given name then a notice\n        \t\t\t\tis generated and the constant is assumed to have the value of its name.",
+                            "match": "[A-Za-z0-9_\\.]*:[A-Za-z0-9_\\.]*",
+                            "name": "support.class"
+                        }
+                    ]
+                }
+            ]
+        },
+        "string-double-quoted": {
+            "begin": "\"",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.begin.php"
+                }
+            },
+            "comment": "This contentName is just to allow the usage of “select scope” to select the string contents first, then the string with quotes",
+            "contentName": "meta.string-contents.quoted.double.php",
+            "end": "\"",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.php"
+                }
+            },
+            "name": "string.quoted.double.php",
+            "patterns": [
+                {
+                    "include": "#interpolation"
+                }
+            ]
+        },
+        "string-single-quoted": {
+            "begin": "'",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.begin.php"
+                }
+            },
+            "contentName": "meta.string-contents.quoted.single.php",
+            "end": "'",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.php"
+                }
+            },
+            "name": "string.quoted.single.php",
+            "patterns": [
+                {
+                    "match": "\\\\[\\\\']",
+                    "name": "constant.character.escape.php"
+                }
+            ]
+        },
+        "variables": {
+            "patterns": [
+                {
+                    "match": "[A-Za-z0-9_\\.]+ *(?=(\\{|=|@))",
+                    "name": "variable"
+                }
+            ]
+        }
+    },
+    "scopeName": "source.ts2",
+    "uuid": "e942dcd0-31b8-11b3-aa6e-0400200c9a66"
+}
